@@ -1,0 +1,20 @@
+﻿cl : 命令行 warning D9025: 正在重写“/sdl”(用“/GS-”)
+  cnfparser.c
+e:\my codes\test5\test5\cnfparser.c(17): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\stdio.h(207): note: 参见“fopen”的声明
+e:\my codes\test5\test5\cnfparser.c(51): error C3850: “\u0008”: 通用字符名称指定的字符无效
+e:\my codes\test5\test5\cnfparser.c(51): error C3850: “\u000D”: 通用字符名称指定的字符无效
+e:\my codes\test5\test5\cnfparser.c(51): error C3850: “\u000A”: 通用字符名称指定的字符无效
+e:\my codes\test5\test5\cnfparser.c(34): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\stdio.h(207): note: 参见“fopen”的声明
+e:\my codes\test5\test5\cnfparser.c(123): warning C4018: “<”: 有符号/无符号不匹配
+e:\my codes\test5\test5\cnfparser.c(104): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\stdio.h(207): note: 参见“fopen”的声明
+e:\my codes\test5\test5\cnfparser.c(109): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\stdio.h(1195): note: 参见“fscanf”的声明
+e:\my codes\test5\test5\cnfparser.c(110): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\stdio.h(1195): note: 参见“fscanf”的声明
+e:\my codes\test5\test5\cnfparser.c(111): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\stdio.h(1195): note: 参见“fscanf”的声明
+e:\my codes\test5\test5\cnfparser.c(113): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\stdio.h(1195): note: 参见“fscanf”的声明

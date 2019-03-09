@@ -3,10 +3,10 @@
 
 int main() {
 	char filename[MAX_FILE_NAME], temp[MAX_FILE_NAME], *ps;
-	int op = 1;
+	int op = 1, isSudoku=0;
 	clauseHead *pc;
 	liteNode *liteHead, *solution = NULL;
-	liteNode2 *liteHead2, *solution2 = NULL;
+	liteNode2 *liteHead2=NULL, *solution2 = NULL;
 	extern clock_t start, end;
 	root root1;
 	root2 root21;
@@ -14,15 +14,55 @@ int main() {
 	unsigned result;
 	while (op) {
 		system("cls");
-		printf("input .cnf file name:");
-		scanf("%s", filename);
-		if ((liteHead = read(filename, &root1)) && (liteHead2 = read2(filename, &root21))) {
-			printf("读取未发现错误。\n");
-			op = 0;
+		printf("Choose function: 1. SAT Problem; 2. Sudoku Game\n");
+		scanf("%d", &op);
+		if (op == 1) { //选择SAT
+			printf("input .cnf file name:\n");
+			scanf("%s", filename);
+			if ((liteHead = read(filename, &root1)) && (liteHead2 = read2(filename, &root21))) {
+				printf("读取未发现错误。\n");
+				op = 0;
+			}
+			else {
+				printf("读取失败。\n");
+				op = 1;
+			}
 		}
-		else {
-			printf("读取失败。\n");
-			op = 1;
+		else { //选择数独
+			isSudoku = 1;
+			printf("Choose sudoku source: 1. read from file; 2. generate\n");
+			scanf("%d", &op);
+			if (op == 1) { //选择读取
+				printf("input sudoku file name:\n");
+				scanf("%s", filename);
+				liteHead2 = malloc(sizeof(liteNode2) * 730); //多分配一个单元
+				if (!liteHead2) return ERROR;
+				for (int i = 1; i < 730; i++) {
+					liteHead2[i].times = 0;
+					liteHead2[i].isAssigned = FALSE;
+					liteHead2[i].shortestLen = MAX_LITE_NUM;
+					liteHead2[i].isLenChecked = FALSE;
+				}
+				if (convertSudoku(&root21, liteHead2, filename) != OK) {
+					printf("读取失败。\n");
+					op = 1;
+				}
+				else {
+					printf("Choose function: 1. go to game; 2. watch solving process\n");
+					scanf("%d", &op);
+					if (op == 1) {
+						//go to game
+					}
+					else {
+						op = 0; //退出选择
+					}
+				}
+			}
+			else { //选择生成
+				printf("to be finished...");
+				op = 1;
+			}
+
 		}
 		rewind(stdin); getchar();
 	}
@@ -38,56 +78,47 @@ int main() {
 		switch (op) {
 		case 1:
 			strcpy(temp, filename);
-			op = traverse(strcat(temp, ".check1"), &root1);
-			if (op != ERROR) printf("输出至文件%s完成。", temp);
-			else printf("输出至文件失败。");
+			if (isSudoku != 1) {
+				op = traverse(strcat(temp, ".check1"), &root1);
+				if (op != ERROR) printf("输出至文件%s完成。", temp);
+				else printf("输出至文件失败。");
+			}
 			op = traverse2(strcat(temp, ".check2"), &root21);
 			if (op != ERROR) printf("输出至文件%s完成。", temp);
 			else printf("输出至文件失败。");
 			rewind(stdin);
 			getchar();
-			/**
-			outLite = fopen("literals.cnf", "w");
-			if (!outLite) {
-				printf("输出至文件失败。");
-				rewind(stdin);
-				getchar();
-				break;
-			}
-			for (int i = 1; i < root1.literalNum + 1; i++) {
-				fprintf(outLite, "%d's shortestLen is %d, \n", i, liteHead[i].shortestLen);
-			}
-			fclose(outLite);
-			**/
 			break;
 		case 2:
-			start = clock();
-			result = DPLL(&root1, liteHead, &solution, 0, TRUE);
-			end = clock();
-			t1 = ((double)(end - start) / CLK_TCK * 1000);
-			if (result == TRUE) {
-				printf("原算法解出一解，耗时%.2fms.\n", t1);
-				if ((result = checkSolution(solution, &root1)) != 0)printf("求解错误，第%d行不满足。\n", result);
-				else printf("解验证完毕，满足。\n");
-			}
-			else if (result == FALSE)printf("原算法解得此SAT问题无解，耗时%.2fms.\n", t1);
-			else printf("原算法超时，耗时%.2fms。\n", t1);
+			if (isSudoku != 1) {
+				start = clock();
+				result = DPLL(&root1, liteHead, &solution, 0, TRUE);
+				end = clock();
+				t1 = ((double)(end - start) / CLK_TCK * 1000);
+				if (result == TRUE) {
+					printf("原算法解出一解，耗时%.2fms.\n", t1);
+					if ((result = checkSolution(solution, &root1)) != 0)printf("求解错误，第%d行不满足。\n", result);
+					else printf("解验证完毕，满足。\n");
+				}
+				else if (result == FALSE)printf("原算法解得此SAT问题无解，耗时%.2fms.\n", t1);
+				else printf("原算法超时，耗时%.2fms。\n", t1);
 
-			if (result != ERROR) {
-				//得到同名.res文件名
-				ps = strstr(filename, ".cnf");
-				strcpy(ps, ".res");
-				if (output(solution, t1, filename) == ERROR) {
-					printf("输出至文件%s出错。\n", filename);
-					rewind(stdin);
-					getchar();
+				if (result != ERROR) {
+					//得到同名.res文件名
+					ps = strstr(filename, ".cnf");
+					strcpy(ps, ".res");
+					if (output(solution, t1, filename) == ERROR) {
+						printf("输出至文件%s出错。\n", filename);
+						rewind(stdin);
+						getchar();
+					}
+					else {
+						printf("输出至文件%s成功。\n", filename);
+						rewind(stdin);
+						getchar();
+					}
+					free(solution); //释放解所占内存
 				}
-				else {
-					printf("输出至文件%s成功。\n", filename);
-					rewind(stdin);
-					getchar();
-				}
-				free(solution); //释放解所占内存
 			}
 			start = clock();
 			result = optDPLL(&root21, liteHead2, &solution2);
@@ -122,34 +153,24 @@ int main() {
 			break;
 		case 3:
 			strcpy(temp, filename);
-			op = analyze1(strcat(temp, ".anl1"), &root1);
-			if (op != ERROR) printf("输出至文件%s完成。", temp);
-			else printf("输出至文件失败。");
+			if (isSudoku != 1) {
+				op = analyze1(strcat(temp, ".anl1"), &root1);
+				if (op != ERROR) printf("输出至文件%s完成。", temp);
+				else printf("输出至文件失败。");
+			}
 			op = traverse2(strcat(temp, ".anl2"), &root21);
 			if (op != ERROR) printf("输出至文件%s完成。", temp);
 			else printf("输出至文件失败。");
 			rewind(stdin);
 			getchar();
-			/**
-			outLite = fopen("literals.cnf", "w");
-			if (!outLite) {
-				printf("输出至文件失败。");
-				rewind(stdin);
-				getchar();
-				break;
-			}
-			for (int i = 1; i < root1.literalNum + 1; i++) {
-				fprintf(outLite, "%d's shortestLen is %d, \n", i, liteHead[i].shortestLen);
-			}
-			fclose(outLite);
-			**/
 			break;
 		case 0:
 			//原算法释放内存
-			for (pc = root1.chainHead; pc->next; deleteClause(pc)); //删除chainHead后面的所有子句
-			free(pc);
-			free(liteHead);
-				
+			if (isSudoku != 1) {
+				for (pc = root1.chainHead; pc->next; deleteClause(pc)); //删除chainHead后面的所有子句
+				free(pc);
+				free(liteHead);
+			}
 			//TODO: 优化算法释放内存待完成
 			return 0;
 		default:
